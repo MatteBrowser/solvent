@@ -51,7 +51,7 @@ class JSObject(object):
   def ownKeys(self):
     res = JSObject(None)
     for i, key in enumerate(self.storage.keys()):
-      res.setProperty(JSString(unicode(i)), JSString(unicode(key)))
+      res.set(JSString(unicode(i)), JSString(unicode(key)))
 
     return res
 

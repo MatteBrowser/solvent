@@ -9,8 +9,24 @@ class JSObject(object):
   def __init__(self, proto):
     self.storage = {}  # type: dict[unicode, JSObject]
     self.proto = proto # type: JSObject
-  
-  def getProperty(self, key):
+
+  def apply(self, thisArg, argumentsList):
+    raise Exception("Not Implemented")
+
+  def construct(self, args):
+    raise Exception("Not Implemented")
+
+  def defineProperty(self, key, desc):
+    raise Exception('Not implemented')
+
+  def deleteProperty(self, key):
+    assert isinstance(key, JSString)
+
+    self.storage[key.string] = None
+
+    return JSUndefined()
+
+  def get(self, key):
     assert isinstance(key, JSString)
 
     val = self.storage[key.string]
@@ -19,7 +35,30 @@ class JSObject(object):
     else:
       return JSUndefined()
   
-  def setProperty(self, key, val):
+  def getOwnPropertyDescriptor(self, key):
+    raise Exception('Not Implemented')
+
+  def getPrototypeOf(self):
+    raise Exception("Not Implemented")
+
+  def has(self, key):
+    assert isinstance(key, JSString)
+    return JSBoolean(key.string in self.storage)
+
+  def isExtensible(self):
+    raise Exception("Not Implemented")
+
+  def ownKeys(self):
+    res = JSObject(None)
+    for i, key in enumerate(self.storage.keys()):
+      res.setProperty(JSString(unicode(i)), JSString(unicode(key)))
+
+    return res
+
+  def preventExtensions(self):
+    raise Exception('Not Implemented')
+  
+  def set(self, key, val):
     assert isinstance(key, JSString)
     assert isinstance(val, JSObject)
 
@@ -27,42 +66,8 @@ class JSObject(object):
 
     return JSUndefined()
   
-  def deleteProperty(self, key):
-    assert isinstance(key, JSString)
-
-    self.storage[key.string] = None
-
-    return JSUndefined()
-
-  def enumerate(self):
-    keys = self.storage.keys()
-    proto = self.proto
-    while proto != None:
-      keys = keys + proto.storage.keys()
-      proto = proto.proto != proto and proto.proto or None
-
-    res = JSObject(None)
-    for i, key in enumerate(keys):
-      res.setProperty(JSString(unicode(i)), JSString(unicode(key)))
-    
-    return res
-  
-  def ownKeys(self):
-    res = JSObject(None)
-    for i, key in enumerate(self.storage.keys()):
-      res.setProperty(JSString(unicode(i)), JSString(unicode(key)))
-
-    return res
-  
-  def has(self, key):
-    assert isinstance(key, JSString)
-    return JSBoolean(key.string in self.storage)
-  
-  def defineProperty(self, key, desc):
-    raise Exception('Not implemented')
-  
-  def getOwnPropertyDescriptor(self, key):
-    raise Exception('Not implemented')
+  def setPrototypeOf(self, proto):
+    raise Exception("Not Implemented")
 
 class JSString(JSObject):
   def __init__(self, string):
